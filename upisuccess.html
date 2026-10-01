@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuvCall Live - Demo Payment</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 30%, #1c1533 0%, #0c0a15 60%, #05040a 100%);
+            min-height: 100vh;
+        }
+
+        .font-brand {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Glassmorphism & Custom Glow Utilities */
+        .glow-card {
+            background: linear-gradient(180deg, #131122 0%, #0d0b17 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 50px rgba(168, 85, 247, 0.15), 0 20px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .glow-badge {
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .action-btn-glow {
+            box-shadow: 0 8px 25px rgba(217, 70, 239, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .action-btn-glow:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 15px rgba(217, 70, 239, 0.3);
+        }
+
+        .details-box {
+            background: #151326;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .highlight-banner {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .redirect-countdown {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: -8px 0 20px;
+            padding: 11px 14px;
+            border: 1px solid rgba(244, 114, 182, 0.35);
+            border-radius: 12px;
+            background: rgba(217, 70, 239, 0.1);
+            color: #f3e8ff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .redirect-countdown strong {
+            min-width: 26px;
+            color: #f9a8d4;
+            font-size: 19px;
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+        }
+
+        .note-box {
+            background: rgba(30, 25, 20, 0.6);
+            border: 1px solid rgba(217, 119, 6, 0.3);
+        }
+
+        /* Hide scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 min-h-screen text-white select-none">
+
+<div class="w-full max-w-[400px] glow-card rounded-[28px] p-6 sm:p-7 flex flex-direction flex-col justify-between relative overflow-hidden my-auto">
+
+    <!-- Header Section -->
+    <div class="text-center pt-2 pb-5">
+        <h1 class="text-2xl sm:text-3xl tracking-wide font-brand">
+            LuvCall <span class="italic font-serif text-pink-400 font-light ml-0.5">Live</span>
+        </h1>
+        <p class="text-[10px] sm:text-[11px] tracking-[0.25em] text-gray-400 uppercase font-medium mt-1">
+            PREMIUM ACCESS
+        </p>
+    </div>
+
+    <!-- Verified Badge -->
+    <div class="flex justify-center mb-6">
+        <div class="glow-badge rounded-full px-5 py-2 flex items-center gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/50">
+                <svg class="w-3.5 h-3.5 text-black stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <span class="text-emerald-400 font-bold text-xs tracking-wider">DEMO PAYMENT COMPLETE</span>
+        </div>
+    </div>
+
+    <!-- Price Section -->
+    <div class="text-center mb-6">
+        <div class="text-5xl font-black text-pink-500 tracking-tight flex items-center justify-center gap-0.5">
+            <span>₹5</span>
+        </div>
+        <p class="text-xs text-gray-400 font-medium mt-2">
+            Demo access preview
+        </p>
+    </div>
+
+    <!-- Transaction Details Card -->
+    <div class="details-box rounded-2xl p-4 sm:p-5 mb-5 space-y-3.5 text-xs sm:text-[13px]">
+        <div class="flex justify-between items-center">
+            <span class="text-gray-400">Payment mode</span>
+            <span class="font-bold text-gray-100">Simulation only</span>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="text-gray-400">Real payment</span>
+            <span class="font-bold text-gray-200">Not processed</span>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="text-gray-400">Demo status</span>
+            <span class="font-bold text-emerald-400 flex items-center gap-1">
+                COMPLETE
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </span>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="text-gray-400">Access</span>
+            <span class="font-bold text-gray-100">Saved in this browser</span>
+        </div>
+    </div>
+
+    <!-- Lifetime Access Highlight Banner -->
+    <div class="highlight-banner rounded-2xl p-3.5 text-center mb-5">
+        <h3 class="text-emerald-400 font-bold text-sm tracking-wide">
+            Demo Access Activated
+        </h3>
+        <p class="text-[11px] text-emerald-300/70 font-medium mt-0.5">
+            Simulated only · No money was charged
+        </p>
+    </div>
+
+    <!-- CTA Button -->
+    <button id="watchBtn" class="w-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 hover:brightness-110 py-3.5 px-6 rounded-full font-bold text-sm text-white flex items-center justify-center gap-2.5 action-btn-glow mb-5 transition-all">
+        <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+            <svg class="w-3 h-3 text-white fill-current ml-0.5" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"></path>
+            </svg>
+        </div>
+        <span>Open Videos</span>
+    </button>
+    <div id="redirect-countdown" class="redirect-countdown" aria-live="polite">
+        <span>Opening videos in</span>
+        <strong id="redirect-seconds">6</strong>
+        <span>seconds</span>
+    </div>
+
+    <!-- Info Note Box -->
+    <div class="note-box rounded-xl p-3.5 mb-6 text-[11px] leading-relaxed text-amber-200/80">
+        <p>
+            <span class="inline-block mr-1">🔒</span>
+            <strong class="text-amber-400 font-semibold">Demo:</strong> This page does not confirm or process a real UPI payment. Access is saved locally for testing.
+        </p>
+    </div>
+
+    <!-- Secure Gateway Footer -->
+    <div class="flex items-center justify-center gap-1.5 text-[10px] text-gray-500 tracking-widest font-semibold uppercase">
+        <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+        <span>PAYMENT SIMULATION</span>
+    </div>
+
+</div>
+
+<!-- JavaScript interactive feedback -->
+<script>
+    const redirectUrl = 'index.html?demoPayment=success&view=videos';
+    const countdown = document.getElementById('redirect-seconds');
+    let secondsRemaining = 6;
+
+    document.getElementById('watchBtn').addEventListener('click', function() {
+        this.disabled = true;
+        window.location.href = redirectUrl;
+    });
+
+    const countdownInterval = window.setInterval(() => {
+        secondsRemaining -= 1;
+        countdown.textContent = secondsRemaining;
+
+        if (secondsRemaining <= 0) {
+            window.clearInterval(countdownInterval);
+            window.location.href = redirectUrl;
+        }
+    }, 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1523 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="theme-color" content="#090b10">
+	<title>Live Girls | Discover</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			color-scheme: dark;
+			--page: #090b10;
+			--surface: #10141b;
+			--line: rgba(255, 255, 255, .08);
+			--muted: #9aa1ad;
+			--pink: #f32d9a;
+			--mint: #60e2b0;
+			--white: #f7f8fb;
+			font-family: 'DM Sans', sans-serif;
+			background: var(--page);
+			color: var(--white);
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-width: 320px;
+			min-height: 100vh;
+			margin: 0;
+			background-color: #07090d;
+			background-image: linear-gradient(135deg, rgba(48, 70, 79, .12) 0, transparent 34%, rgba(89, 29, 67, .1) 100%);
+		}
+
+		button { font: inherit; }
+
+		.app {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			width: min(100%, 480px);
+			min-height: 100vh;
+			min-height: 100dvh;
+			margin: 0 auto;
+			overflow: hidden;
+			background: var(--page);
+			box-shadow: 0 0 80px rgba(0, 0, 0, .5);
+		}
+
+		.topbar {
+			z-index: 2;
+			padding: max(12px, env(safe-area-inset-top)) 20px 0;
+			background: linear-gradient(180deg, #090b10 75%, rgba(9, 11, 16, .94));
+		}
+
+		.status-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			height: 23px;
+			color: #e7e9ee;
+			font-size: 12px;
+			font-weight: 700;
+			display: none;
+		}
+
+		.status-icons { display: flex; align-items: center; gap: 5px; }
+		.status-icons svg { width: 14px; height: 14px; }
+		.battery { width: 20px; height: 10px; border: 1.4px solid currentColor; border-radius: 3px; padding: 1px; }
+		.battery::after { display: block; width: 72%; height: 100%; border-radius: 1px; background: currentColor; content: ''; }
+
+		.title-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 24px 0 17px;
+		}
+
+		h1 {
+			margin: 0;
+			font-family: Manrope, sans-serif;
+			font-size: 23px;
+			font-weight: 800;
+			letter-spacing: 0;
+		}
+
+		h1 span { color: var(--pink); }
+
+		.live-count {
+			display: flex;
+			align-items: center;
+			gap: 7px;
+			color: #b8c0ca;
+			font-size: 11px;
+			font-weight: 600;
+		}
+
+		.live-count::before {
+			width: 7px;
+			height: 7px;
+			border-radius: 50%;
+			background: var(--mint);
+			box-shadow: 0 0 10px rgba(96, 226, 176, .58);
+			content: '';
+		}
+
+		.filters {
+			display: flex;
+			gap: 7px;
+			padding-bottom: 13px;
+		}
+
+		.filter {
+			min-height: 30px;
+			padding: 0 13px;
+			border: 1px solid var(--line);
+			border-radius: 99px;
+			background: transparent;
+			color: #a6adb9;
+			font-size: 11px;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.filter[aria-pressed="true"] {
+			border-color: rgba(243, 45, 154, .35);
+			background: rgba(243, 45, 154, .12);
+			color: #ff77bc;
+		}
+
+		main { flex: 1; padding: 0 14px 92px; }
+
+		.profile-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 12px;
+		}
+
+		.profile-card {
+			position: relative;
+			isolation: isolate;
+			overflow: hidden;
+			aspect-ratio: .69;
+			min-height: 235px;
+			border: 1px solid rgba(255, 255, 255, .1);
+			border-radius: 17px;
+			background: #1c232c;
+			animation: rise-in .5s both;
+		}
+
+		.profile-card:nth-child(2) { animation-delay: 55ms; }
+		.profile-card:nth-child(3) { animation-delay: 100ms; }
+		.profile-card:nth-child(4) { animation-delay: 145ms; }
+		.profile-card:nth-child(5) { animation-delay: 190ms; }
+		.profile-card:nth-child(6) { animation-delay: 235ms; }
+
+		@keyframes rise-in {
+			from { opacity: 0; transform: translateY(9px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		.profile-photo {
+			position: absolute;
+			z-index: -2;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center 34%;
+			filter: saturate(1.12) contrast(1.035);
+			transition: transform .35s ease;
+		}
+
+		.profile-card:hover .profile-photo { transform: scale(1.035); }
+
+		.profile-card::after {
+			position: absolute;
+			z-index: -1;
+			inset: 25% 0 0;
+			background: linear-gradient(180deg, transparent 0%, rgba(7, 10, 15, .18) 32%, rgba(7, 10, 15, .91) 100%);
+			content: '';
+		}
+
+		.card-top {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 10px 9px;
+		}
+
+		.online-badge, .age-badge {
+			display: inline-flex;
+			align-items: center;
+			min-height: 22px;
+			border-radius: 99px;
+			font-size: 10px;
+			font-weight: 700;
+			backdrop-filter: blur(10px);
+		}
+
+		.online-badge { gap: 5px; padding: 0 8px; background: rgba(5, 26, 23, .76); color: var(--mint); }
+		.online-badge::before { width: 6px; height: 6px; border-radius: 50%; background: var(--mint); content: ''; }
+		.age-badge { padding: 0 8px; background: rgba(9, 13, 20, .66); color: #fff; }
+
+		.profile-info { position: absolute; right: 9px; bottom: 10px; left: 9px; }
+
+		.location {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			margin-bottom: 3px;
+			color: rgba(255, 255, 255, .79);
+			font-size: 10px;
+		}
+
+		.location svg { width: 11px; height: 11px; }
+
+		.profile-name {
+			overflow: hidden;
+			margin: 0 0 9px;
+			font-family: Manrope, sans-serif;
+			font-size: clamp(14px, 4vw, 17px);
+			font-weight: 800;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.card-actions { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+
+		.call-hint { color: rgba(255, 255, 255, .83); font-size: 10px; white-space: nowrap; }
+		.call-hint span { color: #ff62af; }
+
+		.call-button {
+			display: inline-flex;
+			flex: 0 0 auto;
+			align-items: center;
+			justify-content: center;
+			gap: 5px;
+			min-width: 64px;
+			min-height: 31px;
+			padding: 0 10px;
+			border: 0;
+			border-radius: 99px;
+			background: var(--pink);
+			color: white;
+			font-size: 11px;
+			font-weight: 700;
+			cursor: pointer;
+			box-shadow: 0 4px 16px rgba(243, 45, 154, .23);
+			transition: background .18s ease, transform .18s ease;
+		}
+
+		.call-button:hover { transform: translateY(-1px); background: #ff48aa; }
+		.call-button svg { width: 13px; height: 13px; }
+
+		.chat-list {
+			display: grid;
+			gap: 12px;
+			padding: 0 12px 110px;
+		}
+		.chat-room, .videos-library { min-height: 65vh; padding: 4px 2px 110px; }
+		.demo-label { margin: 0 0 12px; color: #9aa1ad; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+		.room-profile { display: flex; align-items: center; gap: 10px; padding: 10px 0 14px; border-bottom: 1px solid var(--line); }
+		.room-avatar { width: 42px; height: 42px; border: 2px solid rgba(96, 226, 176, .75); border-radius: 50%; object-fit: cover; }
+		.room-profile h2 { margin: 0; font: 700 15px Manrope, sans-serif; }
+		.room-status { margin-top: 3px; color: var(--mint); font-size: 11px; }
+		.room-messages { display: flex; min-height: 280px; flex-direction: column; gap: 10px; padding: 16px 0; }
+		.room-message { max-width: 82%; padding: 10px 13px; border: 1px solid var(--line); border-radius: 15px 15px 15px 4px; background: #1a1e27; color: #f3f4f7; font-size: 13px; line-height: 1.4; }
+		.room-message.sent { align-self: flex-end; border-color: rgba(243, 45, 154, .28); border-radius: 15px 15px 4px 15px; background: rgba(243, 45, 154, .18); }
+		.room-message.note { align-self: center; max-width: 100%; border-radius: 99px; background: rgba(255, 255, 255, .035); color: var(--muted); font-size: 11px; text-align: center; }
+		.room-compose { display: flex; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+		.room-compose input { min-width: 0; flex: 1; height: 42px; padding: 0 13px; border: 1px solid var(--line); border-radius: 12px; outline: none; background: #141821; color: var(--white); font: inherit; font-size: 13px; }
+		.room-compose input:focus { border-color: rgba(243, 45, 154, .55); }
+		.room-compose button { min-width: 64px; border: 0; border-radius: 12px; background: var(--pink); color: white; font-size: 12px; font-weight: 700; }
+		.room-compose :disabled { cursor: not-allowed; opacity: .45; }
+		.videos-heading { margin: 3px 0 5px; font: 700 20px Manrope, sans-serif; }
+		.videos-copy { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+		.video-list { display: grid; gap: 12px; }
+		.video-list video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; background: #151922; }
+		.video-frame { display: block; width: 100%; height: 68vh; min-height: 360px; border: 1px solid var(--line); border-radius: 12px; background: #151922; }
+		.video-empty { padding: 24px 16px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); font-size: 13px; text-align: center; }
+		.chat-row {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 12px 12px 12px 10px;
+			border: 1px solid rgba(255, 255, 255, .08);
+			border-radius: 18px;
+			background: rgba(255, 255, 255, .02);
+			box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+		}
+		.chat-avatar {
+			width: 52px;
+			height: 52px;
+			border-radius: 50%;
+			object-fit: cover;
+			border: 2px solid rgba(255, 118, 184, .8);
+		}
+		.chat-user {
+			display: flex;
+			flex: 1;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+		}
+		.chat-name-wrap {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+		}
+		.chat-name {
+			margin: 0;
+			font-size: 17px;
+			font-weight: 800;
+			letter-spacing: -0.02em;
+		}
+		.chat-meta {
+			display: flex;
+			align-items: center;
+			gap: 7px;
+			color: rgba(255,255,255,.75);
+			font-size: 12px;
+			font-weight: 500;
+		}
+		.chat-online-dot {
+			display: inline-block;
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: #4ade80;
+			box-shadow: 0 0 0 2px rgba(74, 222, 128, .18);
+		}
+		.chat-button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			position: relative;
+			min-width: 82px;
+			height: 38px;
+			padding: 0 18px;
+			border: 0;
+			border-radius: 999px;
+			background: linear-gradient(90deg, #ff5fad, #f66cf0);
+			color: #fff;
+			font-size: 13px;
+			font-weight: 800;
+			cursor: pointer;
+		}
+		.chat-button svg { width: 15px; height: 15px; }
+
+		.bottom-nav {
+			position: absolute;
+			z-index: 4;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			padding: 10px 12px max(12px, env(safe-area-inset-bottom));
+			border-top: 1px solid var(--line);
+			background: rgba(9, 11, 16, .96);
+			backdrop-filter: blur(18px);
+		}
+
+		.nav-button {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 4px;
+			min-height: 46px;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			color: #707986;
+			font-size: 10px;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.nav-button svg { width: 21px; height: 21px; stroke-width: 1.9; }
+		.nav-button[aria-current="page"] { color: var(--pink); }
+		.profile-more-wrap { display: flex; justify-content: center; padding: 18px 0 24px; }
+		.profile-more {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 9px;
+			min-width: 136px;
+			min-height: 42px;
+			padding: 0 18px;
+			border: 1px solid rgba(243, 45, 154, .34);
+			border-radius: 12px;
+			background: rgba(243, 45, 154, .1);
+			color: #ff77bc;
+			font-size: 13px;
+			font-weight: 700;
+			cursor: pointer;
+		}
+		.profile-more svg { width: 18px; height: 18px; }
+
+		.empty-state {
+			display: grid;
+			min-height: 55vh;
+			align-content: center;
+			justify-items: center;
+			padding: 20px;
+			text-align: center;
+		}
+
+		.empty-icon {
+			display: grid;
+			width: 62px;
+			height: 62px;
+			margin-bottom: 17px;
+			place-items: center;
+			border: 1px solid rgba(243, 45, 154, .25);
+			border-radius: 20px;
+			background: rgba(243, 45, 154, .1);
+			color: #ff68b5;
+		}
+
+		.empty-icon svg { width: 27px; height: 27px; }
+		.empty-state h2 { margin: 0 0 6px; font: 800 18px Manrope, sans-serif; }
+		.empty-state p { max-width: 250px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+		.empty-state .call-button { margin-top: 18px; min-height: 38px; padding: 0 17px; }
+
+		.chat-offer {
+			display: grid;
+			min-height: min(740px, calc(100dvh - 170px));
+			place-items: center;
+			padding: 20px 7px 42px;
+		}
+		.offer-card {
+			width: min(100%, 360px);
+			padding: 34px 21px 26px;
+			border: 1px solid rgba(243, 45, 154, .3);
+			border-radius: 24px;
+			background: #100a18;
+			box-shadow: 0 18px 55px rgba(243, 45, 154, .1), inset 0 1px rgba(255, 255, 255, .035);
+			text-align: center;
+		}
+		.offer-lock { display: grid; width: 76px; aspect-ratio: 1; margin: 0 auto 18px; place-items: center; border-radius: 21px; background: linear-gradient(145deg, #f43d99, #c51ce3); box-shadow: 0 10px 28px rgba(220, 32, 176, .24); }
+		.offer-lock svg { width: 34px; height: 34px; }
+		.offer-badge { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; margin-bottom: 17px; padding: 6px 11px; border: 1px solid rgba(243, 45, 154, .3); border-radius: 99px; background: rgba(243, 45, 154, .1); color: #ff76bd; font-size: 10px; font-weight: 800; }
+		.offer-badge svg { width: 13px; height: 13px; flex: 0 0 auto; }
+		.offer-title { margin: 0; font: 500 26px Manrope, sans-serif; }
+		.offer-title em { color: #e96db6; font-weight: 500; }
+		.offer-subtitle { margin: 8px 0 26px; color: #91909d; font-size: 12px; }
+		.offer-price { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 23px; }
+		.old-price { color: #66606c; font-size: 16px; text-decoration: line-through; }
+		.new-price { color: #ed37b5; font: 800 52px Manrope, sans-serif; line-height: 1; }
+		.discount-badge { padding: 5px 9px; border-radius: 99px; background: rgba(243, 45, 154, .17); color: #ff83c2; font-size: 11px; font-weight: 800; }
+		.offer-timer { margin-bottom: 18px; padding: 13px 10px; border: 1px solid rgba(243, 45, 154, .18); border-radius: 13px; background: rgba(243, 45, 154, .07); color: #a9a2ad; font-size: 12px; }
+		.offer-timer strong { color: #ff629f; font-size: 13px; }
+		.offer-unlock { display: flex; width: 100%; min-height: 58px; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border: 0; border-radius: 99px; background: linear-gradient(100deg, #f43c8e, #be24e3); box-shadow: 0 8px 26px rgba(222, 35, 153, .25); color: white; font-size: 16px; font-weight: 800; cursor: pointer; }
+		.offer-unlock svg { width: 18px; height: 18px; flex: 0 0 auto; }
+		.offer-footnote { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 13px; color: #716c78; font-size: 10px; }
+		.offer-footnote svg { width: 12px; height: 12px; }
+		@media (max-width: 360px) { .offer-card { padding: 29px 16px 22px; } .offer-title { font-size: 23px; } .new-price { font-size: 48px; } .offer-unlock { font-size: 14px; } }
+
+		.payment-methods {
+			min-height: min(720px, calc(100dvh - 170px));
+			padding: 0 0 100px;
+			background: linear-gradient(135deg, #171321, #0c0812 58%);
+		}
+
+		.payment-summary {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			margin: 0 -14px 22px;
+			padding: 19px 20px 20px;
+			border-bottom: 1px solid rgba(255, 255, 255, .08);
+			background: rgba(255, 255, 255, .035);
+		}
+
+		.payment-summary-label { margin: 0 0 5px; color: #a7a1af; font-size: 12px; }
+		.payment-summary-price { margin: 0; color: #ed39be; font: 800 34px Manrope, sans-serif; }
+		.secure-label { display: flex; align-items: center; gap: 5px; color: #4ee39a; font-size: 11px; font-weight: 700; white-space: nowrap; }
+		.secure-label svg { width: 15px; height: 15px; }
+		.payment-section-label { margin: 0 0 12px 2px; color: #85808d; font-size: 11px; font-weight: 800; letter-spacing: 1px; }
+
+		.upi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; margin-bottom: 17px; }
+		.payment-method {
+			display: flex;
+			min-width: 0;
+			min-height: 142px;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 13px 9px;
+			border: 1px solid rgba(255, 255, 255, .12);
+			border-radius: 17px;
+			background: rgba(255, 255, 255, .045);
+			color: #f0edf3;
+			cursor: pointer;
+			transition: border-color .18s ease, background .18s ease, transform .18s ease;
+		}
+		.payment-method:hover { transform: translateY(-2px); border-color: rgba(243, 45, 154, .55); background: rgba(243, 45, 154, .07); }
+		.method-mark { display: grid; width: 58px; height: 58px; margin-bottom: 10px; place-items: center; border-radius: 15px; background: #25232c; color: #fff; font: 800 24px Manrope, sans-serif; }
+		.method-mark { overflow: hidden; }
+		.method-logo { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 15px; }
+		.method-mark svg { display: block; width: 30px; height: 30px; }
+		.method-mark.google { background: linear-gradient(135deg, #eaf2ff, #dce8ff); }
+		.method-mark.phonepe { background: linear-gradient(135deg, #5f2db5, #7b42d9); }
+		.method-mark.paytm { background: linear-gradient(135deg, #0b9be7, #3cc9ff); }
+		.method-mark.whatsapp { background: linear-gradient(135deg, #25d366, #128c7e); }
+		.method-name { font-size: 14px; font-weight: 700; }
+		.method-type { margin-top: 8px; color: #85808d; font-size: 11px; }
+		.payment-row {
+			display: flex;
+			width: 100%;
+			min-height: 66px;
+			align-items: center;
+			gap: 13px;
+			margin-top: 12px;
+			padding: 10px 14px;
+			border: 1px solid rgba(255, 255, 255, .12);
+			border-radius: 15px;
+			background: rgba(255, 255, 255, .045);
+			color: #f0edf3;
+			text-align: left;
+			cursor: pointer;
+		}
+		.payment-row:hover { border-color: rgba(243, 45, 154, .48); }
+		.row-mark { display: grid; width: 48px; height: 42px; flex: 0 0 auto; place-items: center; border-radius: 9px; background: #27252f; color: #fff; font-weight: 800; }
+		.row-logo { display: block; width: 100%; height: 100%; padding: 3px; border-radius: inherit; object-fit: contain; }
+		.card-row .row-mark { background: linear-gradient(140deg, #f43c8e, #bb28df); }
+		.row-copy { display: grid; flex: 1; gap: 4px; }
+		.row-copy strong { font-size: 13px; }
+		.row-copy span { color: #888390; font-size: 11px; }
+		.row-chevron { width: 19px; height: 19px; color: #888390; }
+		.gateway-notice { margin: 13px 2px 0; color: #ff9cc8; font-size: 11px; line-height: 1.45; }
+		.upi-handoff { min-height: min(720px, calc(100dvh - 170px)); padding: 0 0 100px; background: #090811; }
+		.handoff-summary { display: flex; justify-content: space-between; gap: 12px; margin: 0 -14px 28px; padding: 19px 20px; border-bottom: 1px solid rgba(255, 255, 255, .08); background: #14131c; color: #a9a7b1; font-size: 12px; }
+		.handoff-summary strong { color: #f4f2f7; text-align: right; }
+		.handoff-content { max-width: 330px; margin: 0 auto; padding: 0 16px; text-align: center; }
+		.handoff-provider { display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 30px; padding: 9px 13px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 99px; background: rgba(255, 255, 255, .05); color: #eeeaf2; font-size: 13px; font-weight: 700; }
+		.handoff-provider-mark { display: grid; width: 24px; height: 24px; place-items: center; border-radius: 7px; background: #5f2db5; color: white; font-weight: 800; }
+		.handoff-label { margin: 0 0 58px; color: #85818d; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+		.upi-safety { display: flex; align-items: flex-start; gap: 10px; padding: 13px 12px; border: 1px solid rgba(246, 190, 61, .2); border-radius: 12px; background: rgba(246, 190, 61, .07); color: #d3c8a8; font-size: 12px; line-height: 1.5; text-align: left; }
+		.upi-safety svg { width: 17px; height: 17px; flex: 0 0 auto; color: #f3c441; }
+		.handoff-title { margin: 22px 0 7px; color: #f4f2f7; font: 700 17px Manrope, sans-serif; }
+		.handoff-copy { margin: 0; color: #96919e; font-size: 12px; line-height: 1.55; }
+		.handoff-back { width: 100%; min-height: 46px; margin-top: 28px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 12px; background: #1b1923; color: #f2eff6; font: 700 13px 'DM Sans', sans-serif; cursor: pointer; }
+		.handoff-back:hover { border-color: rgba(243, 45, 154, .5); }
+		.netbanking-view { min-height: min(720px, calc(100dvh - 170px)); padding: 0 0 100px; }
+		.netbanking-content { max-width: 360px; margin: 0 auto; padding: 20px 16px; }
+		.netbanking-note { margin: 0 0 22px; padding: 13px; border: 1px solid rgba(246, 190, 61, .22); border-radius: 12px; background: rgba(246, 190, 61, .07); color: #e7d8aa; font-size: 12px; line-height: 1.5; }
+		.netbanking-label { display: block; margin-bottom: 8px; color: #aaa4b2; font-size: 12px; font-weight: 700; }
+		.popular-banks-wrapper {
+			margin-bottom: 18px;
+			padding: 14px 12px 12px;
+			border: 1px solid rgba(255, 255, 255, .08);
+			border-radius: 16px;
+			background: rgba(255, 255, 255, .03);
+		}
+		.popular-banks-grid {
+			display: grid;
+			grid-template-columns: repeat(5, minmax(0, 1fr));
+			gap: 8px;
+			margin-top: 8px;
+		}
+		.bank-chip {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 42px;
+			padding: 8px 6px;
+			border: 1px solid rgba(255, 255, 255, .08);
+			border-radius: 12px;
+			background: rgba(24, 22, 33, .9);
+			color: #e8e6ef;
+			font-size: 11px;
+			font-weight: 800;
+			letter-spacing: .04em;
+			cursor: pointer;
+			transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+		}
+		.bank-chip:hover {
+			transform: translateY(-1px);
+			border-color: rgba(243, 45, 154, .4);
+		}
+		.bank-chip.active {
+			border-color: rgba(243, 45, 154, .7);
+			background: linear-gradient(135deg, rgba(243, 45, 154, .22), rgba(170, 73, 255, .14));
+			box-shadow: 0 0 0 1px rgba(243, 45, 154, .18), 0 8px 16px rgba(243, 45, 154, .12);
+		}
+		.form-group {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+		.credentials-box {
+			display: grid;
+			gap: 16px;
+			margin-top: 16px;
+			padding: 14px 12px;
+			border: 1px solid rgba(255, 255, 255, .08);
+			border-radius: 16px;
+			background: rgba(255, 255, 255, .02);
+		}
+		.netbanking-select,
+		.netbanking-input {
+			width: 100%;
+			min-height: 48px;
+			padding: 0 14px;
+			border: 1px solid rgba(255, 255, 255, .14);
+			border-radius: 12px;
+			background: #171521;
+			color: #f4f2f7;
+			font: inherit;
+			transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+		}
+		.netbanking-select {
+			appearance: none;
+			background-image: linear-gradient(45deg, transparent 50%, #d7d4de 50%), linear-gradient(135deg, #d7d4de 50%, transparent 50%);
+			background-position: calc(100% - 16px) calc(50% - 2px), calc(100% - 11px) calc(50% - 2px);
+			background-size: 5px 5px, 5px 5px;
+			background-repeat: no-repeat;
+			padding-right: 36px;
+		}
+		.netbanking-input::placeholder {
+			color: rgba(181, 177, 188, .8);
+		}
+		.netbanking-select:focus,
+		.netbanking-input:focus {
+			border-color: rgba(243, 45, 154, .7);
+			box-shadow: 0 0 0 3px rgba(243, 45, 154, .14);
+			outline: none;
+		}
+		.netbanking-action {
+			width: 100%;
+			min-height: 48px;
+			margin-top: 18px;
+			border: 0;
+			border-radius: 12px;
+			background: linear-gradient(135deg, #ff4bb3, #b64dff);
+			color: white;
+			font: 700 14px 'DM Sans', sans-serif;
+			cursor: pointer;
+			box-shadow: 0 12px 24px rgba(243, 45, 154, .22);
+		}
+		.netbanking-back {
+			width: 100%;
+			min-height: 46px;
+			margin-top: 10px;
+			border: 1px solid rgba(255, 255, 255, .14);
+			border-radius: 12px;
+			background: #1b1923;
+			color: #f2eff6;
+			font: 700 13px 'DM Sans', sans-serif;
+			cursor: pointer;
+		}
+		.netbanking-password {
+			display: grid;
+			gap: 12px;
+			text-align: left;
+		}
+		.netbanking-password input {
+			width: 100%;
+			min-height: 48px;
+			padding: 0 14px;
+			border: 1px solid rgba(255, 255, 255, .12);
+			border-radius: 12px;
+			background: #171521;
+			color: #f4f2f7;
+			font: inherit;
+		}
+		.netbanking-password input:focus {
+			border-color: rgba(243, 45, 154, .7);
+			outline: none;
+			box-shadow: 0 0 0 3px rgba(243, 45, 154, .14);
+		}
+		.netbanking-password small {
+			color: #a5a0ae;
+			font-size: 11px;
+			line-height: 1.4;
+		}
+		.netbanking-failure { text-align: center; }
+		.netbanking-failure h2 { margin: 18px 0 8px; color: #ff8294; font: 800 22px Manrope, sans-serif; }
+		.netbanking-failure p { margin: 0; color: #aaa4b2; font-size: 13px; line-height: 1.55; }
+		.netbanking-failure-mark { display: grid; width: 58px; aspect-ratio: 1; margin: 12px auto; place-items: center; border: 1px solid rgba(255, 104, 125, .28); border-radius: 50%; background: rgba(255, 104, 125, .1); color: #ff8294; font-size: 32px; }
+
+		.modal-backdrop {
+			position: fixed;
+			z-index: 10;
+			inset: 0;
+			display: grid;
+			align-items: end;
+			justify-items: center;
+			background: rgba(0, 0, 0, .68);
+			backdrop-filter: blur(5px);
+		}
+
+		.call-sheet {
+			width: min(100%, 480px);
+			padding: 24px 22px max(22px, env(safe-area-inset-bottom));
+			border: 1px solid var(--line);
+			border-radius: 22px 22px 0 0;
+			background: #141821;
+			text-align: center;
+			animation: sheet-in .22s ease-out;
+		}
+
+		@keyframes sheet-in { from { transform: translateY(20px); opacity: .5; } to { transform: translateY(0); opacity: 1; } }
+
+		.sheet-handle { width: 36px; height: 4px; margin: -10px auto 21px; border-radius: 9px; background: #454b56; }
+		.sheet-avatar { width: 76px; height: 76px; border: 2px solid rgba(243, 45, 154, .85); border-radius: 50%; object-fit: cover; }
+		.call-sheet h2 { margin: 12px 0 4px; font: 800 20px Manrope, sans-serif; }
+		.call-sheet p { margin: 0 0 20px; color: var(--muted); font-size: 13px; }
+		.sheet-actions { display: flex; gap: 10px; }
+		.sheet-actions button { flex: 1; min-height: 44px; border: 0; border-radius: 12px; font-weight: 700; cursor: pointer; }
+		.cancel-button { background: #252a34; color: #e4e7ec; }
+		.confirm-button { background: var(--pink); color: white; }
+
+		.processing-backdrop {
+			position: fixed;
+			z-index: 15;
+			inset: 0;
+			display: grid;
+			place-items: center;
+			background: rgba(9, 9, 17, .7);
+			backdrop-filter: blur(4px);
+		}
+		.processing-card {
+			position: relative;
+			display: grid;
+			place-items: center;
+			width: min(78vw, 230px);
+			height: min(42vw, 180px);
+			min-height: 150px;
+			padding: 18px 16px;
+			border: 1px solid rgba(255, 99, 164, .6);
+			border-radius: 22px;
+			background: rgba(36, 14, 28, .55);
+			box-shadow: 0 0 40px rgba(230, 87, 165, .18);
+		}
+		.processing-spinner {
+			width: 62px;
+			height: 62px;
+			border: 4px solid rgba(255, 116, 182, .25);
+			border-top: 4px solid #ff6cbb;
+			border-right: 4px solid #ff8c80;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin-bottom: 18px;
+		}
+		@keyframes spin { to { transform: rotate(360deg); } }
+		.processing-text {
+			color: #f4e9ee;
+			font-size: clamp(18px, 5vw, 24px);
+			font-weight: 700;
+			letter-spacing: -0.03em;
+		}
+
+		[hidden] { display: none !important; }
+
+		@media (min-width: 520px) {
+			body { padding: 18px 0; }
+			.app { min-height: calc(100dvh - 36px); border: 1px solid rgba(255, 255, 255, .08); border-radius: 26px; }
+			.bottom-nav { border-radius: 0 0 26px 26px; }
+			.modal-backdrop { position: absolute; border-radius: inherit; }
+			.call-sheet { border-radius: 22px; margin: 16px; }
+		}
+
+		@media (max-width: 360px) {
+			.topbar { padding-right: 15px; padding-left: 15px; }
+			main { padding-right: 10px; padding-left: 10px; }
+			.profile-grid { gap: 9px; }
+			.profile-card { min-height: 218px; border-radius: 14px; }
+			.profile-info { right: 7px; left: 7px; }
+			.call-button { min-width: 58px; padding: 0 8px; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+		}
+	</style>
+</head>
+<body>
+	<div class="app">
+		<header class="topbar">
+			<div class="status-row" aria-hidden="true">
+				<span>9:41</span>
+				<span class="status-icons">
+					<svg viewBox="0 0 18 18" fill="currentColor"><path d="M2 13.5h2v2H2zm4-3h2v5H6zm4-3h2v8h-2zm4-3h2v11h-2z"/></svg>
+					<svg viewBox="0 0 20 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6.5a12 12 0 0 1 16 0M5 9.5a7.5 7.5 0 0 1 10 0m-7 3a3 3 0 0 1 4 0"/><circle cx="10" cy="15" r=".8" fill="currentColor" stroke="none"/></svg>
+					<span class="battery"></span>
+				</span>
+			</div>
+			<div class="title-row">
+				<h1>Live <span>girls</span></h1>
+				<span class="live-count">128 online now</span>
+			</div>
+			<div class="filters" role="group" aria-label="Filter profiles">
+				<button class="filter" type="button" aria-pressed="true" data-filter="all">All profiles</button>
+				<button class="filter" type="button" aria-pressed="false" data-filter="online">Online now</button>
+			</div>
+		</header>
+
+		<main>
+			<section class="profile-grid" id="profile-grid" aria-label="Profiles">
+				<article class="profile-card" data-online="true">
+					<img class="profile-photo" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=640&h=920&q=85" alt="Priya Sharma" fetchpriority="high">
+					<div class="card-top"><span class="online-badge">Online</span><span class="age-badge">23y</span></div>
+					<div class="profile-info"><div class="location"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15s5-4.7 5-9A5 5 0 0 0 3 6c0 4.3 5 9 5 9Zm0-6.8A2.2 2.2 0 1 1 8 3.8a2.2 2.2 0 0 1 0 4.4Z"/></svg>India</div><h2 class="profile-name">Priya Sharma</h2><div class="card-actions"><span class="call-hint">Call <span>♥</span> now</span><button class="call-button" type="button" data-name="Priya Sharma" data-image="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=180&h=180&q=80"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5.2 3.5 7.8 3a1 1 0 0 1 1.1.6l1.2 2.8a1 1 0 0 1-.3 1.2L8.2 9a11 11 0 0 0 2.8 2.8l1.4-1.6a1 1 0 0 1 1.2-.3l2.8 1.2a1 1 0 0 1 .6 1.1l-.5 2.6a1.2 1.2 0 0 1-1.2 1 12.8 12.8 0 0 1-12.1-12 1.2 1.2 0 0 1 1-1.3Z"/></svg>Call</button></div></div>
+				</article>
+				<article class="profile-card" data-online="true">
+					<img class="profile-photo" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=640&h=920&q=85" alt="Aditi Verma" loading="lazy">
+					<div class="card-top"><span class="online-badge">Online</span><span class="age-badge">21y</span></div>
+					<div class="profile-info"><div class="location"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15s5-4.7 5-9A5 5 0 0 0 3 6c0 4.3 5 9 5 9Zm0-6.8A2.2 2.2 0 1 1 8 3.8a2.2 2.2 0 0 1 0 4.4Z"/></svg>India</div><h2 class="profile-name">Aditi Verma</h2><div class="card-actions"><span class="call-hint">Call <span>♥</span> now</span><button class="call-button" type="button" data-name="Aditi Verma" data-image="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=180&h=180&q=80"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5.2 3.5 7.8 3a1 1 0 0 1 1.1.6l1.2 2.8a1 1 0 0 1-.3 1.2L8.2 9a11 11 0 0 0 2.8 2.8l1.4-1.6a1 1 0 0 1 1.2-.3l2.8 1.2a1 1 0 0 1 .6 1.1l-.5 2.6a1.2 1.2 0 0 1-1.2 1 12.8 12.8 0 0 1-12.1-12 1.2 1.2 0 0 1 1-1.3Z"/></svg>Call</button></div></div>
+				</article>
+				<article class="profile-card" data-online="false">
+					<img class="profile-photo" src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=640&h=920&q=85" alt="Sneha Kapoor" loading="lazy">
+					<div class="card-top"><span class="online-badge" hidden>Online</span><span class="age-badge">24y</span></div>
+					<div class="profile-info"><div class="location"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15s5-4.7 5-9A5 5 0 0 0 3 6c0 4.3 5 9 5 9Zm0-6.8A2.2 2.2 0 1 1 8 3.8a2.2 2.2 0 0 1 0 4.4Z"/></svg>India</div><h2 class="profile-name">Sneha Kapoor</h2><div class="card-actions"><span class="call-hint">Call <span>♥</span> now</span><button class="call-button" type="button" data-name="Sneha Kapoor" data-image="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=180&h=180&q=80"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5.2 3.5 7.8 3a1 1 0 0 1 1.1.6l1.2 2.8a1 1 0 0 1-.3 1.2L8.2 9a11 11 0 0 0 2.8 2.8l1.4-1.6a1 1 0 0 1 1.2-.3l2.8 1.2a1 1 0 0 1 .6 1.1l-.5 2.6a1.2 1.2 0 0 1-1.2 1 12.8 12.8 0 0 1-12.1-12 1.2 1.2 0 0 1 1-1.3Z"/></svg>Call</button></div></div>
+				</article>
+				<article class="profile-card" data-online="true">
+					<img class="profile-photo" src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=640&h=920&q=85" alt="Riya Patel" loading="lazy">
+					<div class="card-top"><span class="online-badge">Online</span><span class="age-badge">22y</span></div>
+					<div class="profile-info"><div class="location"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15s5-4.7 5-9A5 5 0 0 0 3 6c0 4.3 5 9 5 9Zm0-6.8A2.2 2.2 0 1 1 8 3.8a2.2 2.2 0 0 1 0 4.4Z"/></svg>India</div><h2 class="profile-name">Riya Patel</h2><div class="card-actions"><span class="call-hint">Call <span>♥</span> now</span><button class="call-button" type="button" data-name="Riya Patel" data-image="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=180&h=180&q=80"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5.2 3.5 7.8 3a1 1 0 0 1 1.1.6l1.2 2.8a1 1 0 0 1-.3 1.2L8.2 9a11 11 0 0 0 2.8 2.8l1.4-1.6a1 1 0 0 1 1.2-.3l2.8 1.2a1 1 0 0 1 .6 1.1l-.5 2.6a1.2 1.2 0 0 1-1.2 1 12.8 12.8 0 0 1-12.1-12 1.2 1.2 0 0 1 1-1.3Z"/></svg>Call</button></div></div>
+				</article>
+				<article class="profile-card" data-online="true">
+					<img class="profile-photo" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=640&h=920&q=85" alt="Meera Joshi" loading="lazy">
+					<div class="card-top"><span class="online-badge">Online</span><span class="age-badge">20y</span></div>
+					<div class="profile-info"><div class="location"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15s5-4.7 5-9A5 5 0 0 0 3 6c0 4.3 5 9 5 9Zm0-6.8A2.2 2.2 0 1 1 8 3.8a2.2 2.2 0 0 1 0 4.4Z"/></svg>India</div><h2 class="profile-name">Meera Joshi</h2><div class="card-actions"><span class="call-hint">Call <span>♥</span> now</span><button class="call-button" type="button" data-name="Meera Joshi" data-image="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=180&h=180&q=80"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5.2 3.5 7.8 3a1 1 0 0 1 1.1.6l1.2 2.8a1 1 0 0 1-.3 1.2L8.2 9a11 11 0 0 0 2.8 2.8l1.4-1.6a1 1 0 0 1 1.2-.3l2.8 1.2a1 1 0 0 1 .6 1.1l-.5 2.6a1.2 1.2 0 0 1-1.2 1 12.8 12.8 0 0 1-12.1-12 1.2 1.2 0 0 1 1-1.3Z"/></svg>Call</button></div></div>
+				</article>
+				<article class="profile-card" data-online="false">
+					<img class="profile-photo" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=640&h=920&q=85" alt="Ananya Rao" loading="lazy">
+					<div class="card-top"><span class="online-badge" hidden>Online</span><span class="age-badge">25y</span></div>
+					<div class="profile-info"><div class="location"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15s5-4.7 5-9A5 5 0 0 0 3 6c0 4.3 5 9 5 9Zm0-6.8A2.2 2.2 0 1 1 8 3.8a2.2 2.2 0 0 1 0 4.4Z"/></svg>India</div><h2 class="profile-name">Ananya Rao</h2><div class="card-actions"><span class="call-hint">Call <span>♥</span> now</span><button class="call-button" type="button" data-name="Ananya Rao" data-image="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=180&h=180&q=80"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5.2 3.5 7.8 3a1 1 0 0 1 1.1.6l1.2 2.8a1 1 0 0 1-.3 1.2L8.2 9a11 11 0 0 0 2.8 2.8l1.4-1.6a1 1 0 0 1 1.2-.3l2.8 1.2a1 1 0 0 1 .6 1.1l-.5 2.6a1.2 1.2 0 0 1-1.2 1 12.8 12.8 0 0 1-12.1-12 1.2 1.2 0 0 1 1-1.3Z"/></svg>Call</button></div></div>
+				</article>
+			</section>
+			<div class="profile-more-wrap" id="profile-more-wrap">
+				<button class="profile-more" id="profile-more" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>More</button>
+			</div>
+
+			<section class="chat-list" id="chat-list" hidden aria-live="polite"></section>
+			<section class="chat-room" id="chat-room" hidden aria-labelledby="room-title">
+				<p class="demo-label">SIMULATED CHAT</p>
+				<div class="room-profile"><img class="room-avatar" id="room-avatar" src="" alt=""><div><h2 id="room-title"></h2><div class="room-status" id="room-status">Chat open · 25 seconds</div></div></div>
+				<div class="room-messages" id="room-messages" role="log" aria-live="polite"></div>
+				<form class="room-compose" id="room-compose"><input id="room-input" type="text" maxlength="160" placeholder="Type a message..." autocomplete="off" aria-label="Type a message"><button id="room-send" type="submit">Send</button></form>
+			</section>
+			<section class="videos-library" id="videos-library" hidden aria-labelledby="videos-heading">
+				<p class="demo-label">VIDEO LIBRARY</p>
+				<h2 class="videos-heading" id="videos-heading">Videos unlocked</h2>
+				<p class="videos-copy">Fox Video Chat</p>
+				<div class="video-list" id="video-list"></div>
+			</section>
+
+			<section class="chat-offer" id="chat-offer" hidden aria-labelledby="chat-offer-title">
+				<div class="offer-card">
+					<div class="offer-lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="11" rx="2" fill="white" stroke="white"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1" fill="#d72fc3" stroke="none"/></svg></div>
+					<div class="offer-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 1.5 3.5 8h3l-.3 6.5 5.3-7h-3z"/></svg>LIMITED OFFER — LIFETIME ACCESS</div>
+					<h2 class="offer-title" id="chat-offer-title">Unlock <em>All Videos</em></h2>
+					<p class="offer-subtitle">Full HD · Unlimited · Permanent access</p>
+					<div class="offer-price"><span class="old-price">₹999</span><strong class="new-price">₹5</strong><span class="discount-badge">99% OFF</span></div>
+					<div class="offer-timer">Offer expires in <strong id="chat-countdown">09:55</strong></div>
+					<button class="offer-unlock" id="chat-unlock" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Unlock Now — ₹5 Only</button>
+					<div class="offer-footnote"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="10" height="8" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>UPI · One-time payment · Permanent access</div>
+				</div>
+			</section>
+
+			<section class="payment-methods" id="chat-payment" hidden aria-labelledby="payment-page-title">
+				<div class="payment-summary">
+					<div><p class="payment-summary-label" id="payment-page-title">Lifetime Video Access</p><p class="payment-summary-price">₹5.00</p></div>
+					<span class="secure-label"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1 2.5 3v4.4c0 3.4 2.3 6.5 5.5 7.6 3.2-1.1 5.5-4.2 5.5-7.6V3L8 1Zm0 2 3.5 1.3v3.1c0 2.3-1.4 4.5-3.5 5.5-2.1-1-3.5-3.2-3.5-5.5V4.3L8 3Z"/></svg>100% Secure</span>
+				</div>
+				<p class="payment-section-label">CHOOSE PAYMENT APP</p>
+				<div class="upi-grid">
+					<button class="payment-method" type="button" data-provider="Google Pay"><span class="method-mark google" aria-label="Google Pay"><img class="method-logo" src="assist/73e7bd22796974242dbb8e3ee9778951.jpg" alt="Google Pay"></span><span class="method-name">Google Pay</span><span class="method-type">UPI</span></button>
+					<button class="payment-method" type="button" data-provider="PhonePe"><span class="method-mark phonepe" aria-label="PhonePe"><img class="method-logo" src="assist/b15dfc9f11992f147703c4b1ff45ea8a.jpg" alt="PhonePe"></span><span class="method-name">PhonePe</span><span class="method-type">UPI</span></button>
+					<button class="payment-method" type="button" data-provider="Paytm"><span class="method-mark paytm" aria-label="Paytm"><img class="method-logo" src="assist/4a212da3d75a3990d525906c92e700da.jpg" alt="Paytm"></span><span class="method-name">Paytm</span><span class="method-type">Wallet · UPI</span></button>
+					<button class="payment-method" type="button" data-provider="WhatsApp"><span class="method-mark whatsapp" aria-label="WhatsApp"><img class="method-logo" src="assist/28afd71d9474a014395faca3c7c6edab.jpg" alt="WhatsApp"></span><span class="method-name">WhatsApp</span><span class="method-type">UPI</span></button>
+				</div>
+				<button class="payment-row" type="button" data-provider="Other UPI app"><span class="row-mark"><img class="row-logo" src="assist/7b92a144d6b3c6f627bd5a5dfcaaf052.jpg" alt="UPI"></span><span class="row-copy"><strong>Other UPI App</strong><span>Enter your UPI ID manually</span></span><svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+				<button class="payment-row card-row" type="button" data-provider="Debit / Credit Card"><span class="row-mark"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="white" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></span><span class="row-copy"><strong>Debit / Credit Card</strong><span>Visa · Mastercard · RuPay</span></span><svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+				<button class="payment-row" type="button" data-provider="Net Banking"><span class="row-mark"><img class="row-logo" src="assist/3d209f106e4bb6659e44a1e412547738.jpg" alt="Net Banking"></span><span class="row-copy"><strong>Net Banking Demo</strong><span>Simulation only · No login required</span></span><svg class="row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+				<p class="gateway-notice" id="gateway-notice" hidden>Payment provider setup is not connected yet. No payment was started or charged.</p>
+			</section>
+
+			<section class="netbanking-view" id="netbanking-demo" hidden aria-labelledby="netbanking-title">
+    <div class="payment-summary">
+        <div>
+            <p class="payment-summary-label">Net Banking Demo</p>
+            <p class="payment-summary-price">₹5.00</p>
+        </div>
+        <span class="secure-label">SIMULATION</span>
+    </div>
+
+    <div class="netbanking-content">
+        <p class="netbanking-note">
+            ⚠️ <strong>Demo Mode:</strong> Do not enter real banking credentials. This is purely a UI simulation for testing purposes.
+        </p>
+
+        <form id="netbanking-form">
+            <!-- Popular Bank Quick Select Grid -->
+            <div class="popular-banks-wrapper">
+                <label class="netbanking-label">Popular Banks</label>
+                <div class="popular-banks-grid">
+                    <button type="button" class="bank-chip" data-bank="State Bank of India">SBI</button>
+                    <button type="button" class="bank-chip" data-bank="HDFC Bank">HDFC</button>
+                    <button type="button" class="bank-chip" data-bank="ICICI Bank">ICICI</button>
+                    <button type="button" class="bank-chip" data-bank="Axis Bank">Axis</button>
+                    <button type="button" class="bank-chip" data-bank="Kotak Mahindra Bank">Kotak</button>
+                </div>
+            </div>
+
+            <!-- Main Bank Dropdown -->
+            <div class="form-group">
+                <label class="netbanking-label" for="demo-bank">Select Bank</label>
+                <select class="netbanking-select" id="demo-bank" required>
+                    <option value="">Select a bank</option>
+                    <option value="State Bank of India">State Bank of India (SBI)</option>
+                    <option value="HDFC Bank">HDFC Bank</option>
+                    <option value="ICICI Bank">ICICI Bank</option>
+                    <option value="Axis Bank">Axis Bank</option>
+                    <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+                    <option value="Punjab National Bank">Punjab National Bank (PNB)</option>
+                    <option value="Bank of Baroda">Bank of Baroda</option>
+                    <option value="Canara Bank">Canara Bank</option>
+                    <option value="Union Bank of India">Union Bank of India</option>
+                    <option value="IndusInd Bank">IndusInd Bank</option>
+                    <option value="IDBI Bank">IDBI Bank</option>
+                    <option value="IDFC FIRST Bank">IDFC FIRST Bank</option>
+                    <option value="YES Bank">YES Bank</option>
+                    <option value="Federal Bank">Federal Bank</option>
+                    <option value="Indian Bank">Indian Bank</option>
+                    <option value="Central Bank of India">Central Bank of India</option>
+                    <option value="Bank of India">Bank of India</option>
+                    <option value="UCO Bank">UCO Bank</option>
+                    <option value="Indian Overseas Bank">Indian Overseas Bank</option>
+                    <option value="Bandhan Bank">Bandhan Bank</option>
+                    <option value="Other Bank">Other Bank</option>
+                </select>
+            </div>
+
+            <!-- Credentials Section -->
+            <div class="credentials-box">
+                <div class="form-group">
+                    <label class="netbanking-label" for="demo-userid">User ID / Customer ID</label>
+                    <input type="text" class="netbanking-input" id="demo-userid" placeholder="Enter demo user ID" autocomplete="off" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="netbanking-label" for="demo-password">Password / Net Banking PIN</label>
+                    <input type="password" class="netbanking-input" id="demo-password" placeholder="Enter demo password" required>
+                </div>
+            </div>
+
+            <button class="netbanking-action" type="submit">Proceed to Pay ₹5.00</button>
+        </form>
+
+        <button class="netbanking-back" id="netbanking-back" type="button">Back to payment methods</button>
+    </div>
+</section>
+
+			<section class="netbanking-failure" id="netbanking-failure" hidden aria-live="polite">
+				<div class="payment-summary">
+					<div>
+						<p class="payment-summary-label">Net Banking Demo</p>
+						<p class="payment-summary-price">₹5.00</p>
+					</div>
+					<span class="secure-label">FAILED</span>
+				</div>
+				<div class="netbanking-content netbanking-failure-content">
+					<div class="netbanking-failure-mark">!</div>
+					<h2>Simulation Failed</h2>
+					<p>This demo bank flow is only a mock interface and does not connect to a real bank. You can retry with UPI or return to the payment methods.</p>
+					<button class="netbanking-action" id="netbanking-try-upi" type="button">Try UPI instead</button>
+					<button class="netbanking-back" id="netbanking-failure-back" type="button">Back to payment methods</button>
+				</div>
+			</section>
+
+			<section class="upi-handoff" id="upi-handoff" hidden aria-labelledby="handoff-title">
+				<div class="handoff-summary"><span>Sending to:<br>Amount:</span><strong>LuvCall Live<br>₹5.00</strong></div>
+				<div class="handoff-content">
+					<div class="handoff-provider"><span class="handoff-provider-mark" id="handoff-mark">पे</span><span id="handoff-provider-name">PhonePe</span></div>
+					<p class="handoff-label">CONTINUE IN YOUR UPI APP</p>
+					<div class="upi-safety"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2 1.8 17h16.4L10 2Zm0 4.2 1 5.3H9l1-5.3Zm0 8.4a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2Z"/></svg><span>Payment amount: <strong>₹5.00</strong> to <strong>LuvCall Live</strong>. Never share your UPI PIN or enter it on this website.</span></div>
+					<h2 class="handoff-title" id="handoff-title">Secure UPI handoff</h2>
+					<p class="handoff-copy">Your UPI PIN belongs only in your official UPI app. Payment setup is not connected here, so no payment has started or been charged.</p>
+					<button class="handoff-back" id="handoff-back" type="button">Back to payment options</button>
+				</div>
+			</section>
+
+			<section class="empty-state" id="other-view" hidden aria-live="polite">
+				<div class="empty-icon" id="empty-icon"></div>
+				<h2 id="empty-title"></h2>
+				<p id="empty-copy"></p>
+				<button class="call-button" id="discover-button" type="button">Discover profiles</button>
+			</section>
+		</main>
+
+		<nav class="bottom-nav" aria-label="Main navigation">
+			<button class="nav-button" type="button" data-view="home" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
+			<button class="nav-button" type="button" data-view="videos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z" fill="currentColor" stroke="none"/></svg><span>Videos</span></button>
+			<button class="nav-button" type="button" data-view="chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg><span>Chat</span></button>
+		</nav>
+
+		<div class="modal-backdrop" id="call-modal" hidden>
+			<section class="call-sheet" role="dialog" aria-modal="true" aria-labelledby="call-title">
+				<div class="sheet-handle"></div>
+				<img class="sheet-avatar" id="sheet-avatar" src="" alt="">
+				<h2 id="call-title">Call profile?</h2>
+				<p id="call-description">Start a voice call now.</p>
+				<div class="sheet-actions"><button class="cancel-button" id="cancel-call" type="button">Not now</button><button class="confirm-button" id="confirm-call" type="button">Start call</button></div>
+			</section>
+		</div>
+
+		<div class="processing-backdrop" id="processing-modal" hidden>
+			<div class="processing-card" aria-live="polite" aria-label="Processing payment">
+				<div class="processing-spinner" aria-hidden="true"></div>
+				<div class="processing-text">Connecting...</div>
+			</div>
+		</div>
+
+		<div class="modal-backdrop" id="netbanking-confirm" hidden>
+			<section class="call-sheet" role="dialog" aria-modal="true" aria-labelledby="netbanking-confirm-title">
+				<div class="sheet-handle"></div>
+				<h2 id="netbanking-confirm-title">Confirm demo payment?</h2>
+				<p>Continue with a payment simulation. No credentials are needed and no charge will occur.</p>
+				<div class="sheet-actions"><button class="cancel-button" id="netbanking-cancel" type="button">Cancel</button><button class="confirm-button" id="netbanking-confirm-pay" type="button">Confirm demo</button></div>
+			</section>
+		</div>
+
+		<div class="modal-backdrop" id="netbanking-password-modal" hidden>
+			<section class="call-sheet" role="dialog" aria-modal="true" aria-labelledby="netbanking-password-title">
+				<div class="sheet-handle"></div>
+				<h2 id="netbanking-password-title">Enter bank password</h2>
+				<div class="netbanking-password">
+					<input id="netbanking-password-input" type="password" placeholder="Password" aria-label="Bank password">
+					<small>For demo purposes only. This is a mock password screen.</small>
+				</div>
+				<div class="sheet-actions" style="margin-top: 18px;"><button class="cancel-button" id="netbanking-password-cancel" type="button">Cancel</button><button class="confirm-button" id="netbanking-password-submit" type="button">Continue</button></div>
+			</section>
+		</div>
+	</div>
+
+	<script>
+		const profileGrid = document.querySelector('#profile-grid');
+		const chatList = document.querySelector('#chat-list');
+		const chatRoom = document.querySelector('#chat-room');
+		const videosLibrary = document.querySelector('#videos-library');
+		const otherView = document.querySelector('#other-view');
+		const chatOffer = document.querySelector('#chat-offer');
+		const chatPayment = document.querySelector('#chat-payment');
+		const upiHandoff = document.querySelector('#upi-handoff');
+		const netbankingDemo = document.querySelector('#netbanking-demo');
+		const netbankingFailure = document.querySelector('#netbanking-failure');
+		const netbankingConfirm = document.querySelector('#netbanking-confirm');
+		const netbankingPasswordModal = document.querySelector('#netbanking-password-modal');
+		const netbankingPasswordInput = document.querySelector('#netbanking-password-input');
+		const profileMoreWrap = document.querySelector('#profile-more-wrap');
+		const netbankingFailureBack = document.querySelector('#netbanking-failure-back');
+		const netbankingTryUpi = document.querySelector('#netbanking-try-upi');
+		const filterButtons = document.querySelectorAll('.filter');
+		const navButtons = document.querySelectorAll('.nav-button');
+		const callModal = document.querySelector('#call-modal');
+		const callTitle = document.querySelector('#call-title');
+		const callDescription = document.querySelector('#call-description');
+		const sheetAvatar = document.querySelector('#sheet-avatar');
+		let currentProfile = '';
+		const accessKey = 'luvcall-demo-access';
+		const accessFromReturn = new URLSearchParams(window.location.search).get('demoPayment') === 'success';
+		let paymentUnlocked = localStorage.getItem(accessKey) === 'true' || accessFromReturn;
+		if (accessFromReturn) {
+			localStorage.setItem(accessKey, 'true');
+			window.history.replaceState({}, '', window.location.pathname);
+		}
+		let chatSessionTimeout;
+		let chatSessionInterval;
+		let chatReplyInterval;
+		const chatSessionSeconds = 25;
+		const videoUrls = [];
+		const pexelsPhotoIds = [
+			'38590759', '10281362', '6060863', '26731805', '35108816',
+			'20736192', '4048041', '27575104', '16556018', '6842907',
+			'35680023', '33703633', '19857782', '39280282', '30238562',
+			'4048043', '4427080', '39431799', '14449876', '29172779'
+		];
+		const portraitUrl = (photoId) => `https://images.pexels.com/photos/${photoId}/pexels-photo-${photoId}.jpeg?auto=compress&cs=tinysrgb&w=640&h=920&fit=crop`;
+		const extraProfiles = [
+			{ name: 'Kavya Nair', online: true },
+			{ name: 'Ishita Sen', online: true },
+			{ name: 'Pooja Mehta', online: false },
+			{ name: 'Nisha Reddy', online: true },
+			{ name: 'Simran Kaur', online: true },
+			{ name: 'Tara Malhotra', online: false },
+			{ name: 'Anika Gupta', online: true },
+			{ name: 'Diya Shah', online: false },
+			{ name: 'Sana Khan', online: true },
+			{ name: 'Myra Kapoor', online: false },
+			{ name: 'Neha Iyer', online: true },
+			{ name: 'Ayesha Ali', online: false },
+			{ name: 'Kiara Das', online: true },
+			{ name: 'Zara Kapoor', online: false }
+		];
+		const profileTemplate = profileGrid.querySelector('.profile-card');
+
+		extraProfiles.forEach((profile) => {
+			const card = profileTemplate.cloneNode(true);
+			const photoIndex = profileGrid.querySelectorAll('.profile-card').length;
+			const photoUrl = portraitUrl(pexelsPhotoIds[photoIndex]);
+			const photo = card.querySelector('.profile-photo');
+			const callButton = card.querySelector('.call-button');
+			photo.src = photoUrl;
+			photo.alt = profile.name;
+			photo.loading = 'lazy';
+			card.querySelector('.profile-name').textContent = profile.name;
+			card.querySelector('.age-badge').textContent = '20y';
+			card.querySelector('.online-badge').hidden = !profile.online;
+			card.dataset.online = String(profile.online);
+			callButton.dataset.name = profile.name;
+			callButton.dataset.image = photoUrl;
+			profileGrid.append(card);
+		});
+
+		function renderChatList() {
+			chatList.innerHTML = '';
+			profileGrid.querySelectorAll('.profile-card').forEach((card) => {
+				const name = card.querySelector('.profile-name').textContent.trim();
+				const image = card.querySelector('.profile-photo').src;
+				const age = card.querySelector('.age-badge').textContent.trim();
+				const online = card.dataset.online === 'true';
+				const row = document.createElement('article');
+				row.className = 'chat-row';
+				row.innerHTML = `
+					<img class="chat-avatar" src="${image}" alt="${name}">
+					<div class="chat-user">
+						<div class="chat-name-wrap">
+							<h3 class="chat-name">${name}</h3>
+							<div class="chat-meta"><span>India</span><span>·</span><span>${age}</span><span>·</span><span class="chat-online-dot" style="opacity:${online ? 1 : 0.4};"></span><span>${online ? 'Online' : 'Offline'}</span></div>
+						</div>
+						<button class="chat-button" type="button" aria-label="Chat with ${name}">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>Chat
+						</button>
+					</div>
+				`;
+				row.querySelector('.chat-button').addEventListener('click', () => {
+					if (paymentUnlocked) openChatRoom(name, image);
+					else showPaymentOptions();
+				});
+				chatList.appendChild(row);
+			});
+		}
+
+		profileGrid.querySelectorAll('.profile-card').forEach((card, index) => {
+			const photoUrl = portraitUrl(pexelsPhotoIds[index]);
+			const photo = card.querySelector('.profile-photo');
+			photo.src = photoUrl;
+			photo.alt = card.querySelector('.profile-name').textContent;
+			photo.loading = index === 0 ? 'eager' : 'lazy';
+			card.querySelector('.call-button').dataset.image = photoUrl;
+		});
+
+		document.querySelectorAll('.age-badge').forEach((badge) => {
+			badge.textContent = '20y';
+		});
+
+		filterButtons.forEach((button) => {
+			button.addEventListener('click', () => {
+				filterButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+				document.querySelectorAll('.profile-card').forEach((card) => {
+					card.hidden = button.dataset.filter === 'online' && card.dataset.online !== 'true';
+				});
+			});
+		});
+
+		navButtons.forEach((button) => {
+			button.addEventListener('click', () => {
+				const view = button.dataset.view;
+				navButtons.forEach((item) => item.removeAttribute('aria-current'));
+				button.setAttribute('aria-current', 'page');
+				const isHome = view === 'home';
+				const isChat = view === 'chat';
+				const isVideos = view === 'videos';
+				if (isVideos) videosCheckout = false;
+				profileGrid.hidden = !isHome;
+				profileMoreWrap.hidden = !isHome;
+				document.querySelector('.filters').hidden = !isHome;
+				chatList.hidden = !isChat;
+				chatRoom.hidden = true;
+				chatOffer.hidden = !isVideos || paymentUnlocked;
+				videosLibrary.hidden = !isVideos || !paymentUnlocked;
+				chatPayment.hidden = true;
+				upiHandoff.hidden = true;
+				netbankingDemo.hidden = true;
+				netbankingFailure.hidden = true;
+				netbankingConfirm.hidden = true;
+				otherView.hidden = isHome || isChat || isVideos;
+				document.querySelector('.live-count').hidden = !isHome;
+				document.querySelector('.title-row h1').innerHTML = isChat ? 'Live <span>chat</span>' : isHome ? 'Live <span>girls</span>' : 'Live <span>videos</span>';
+
+			});
+		});
+
+		function showPaymentOptions() {
+			profileGrid.hidden = true;
+			profileMoreWrap.hidden = true;
+			document.querySelector('.filters').hidden = true;
+			chatList.hidden = true;
+			chatRoom.hidden = true;
+			chatOffer.hidden = true;
+			videosLibrary.hidden = true;
+			chatPayment.hidden = false;
+			upiHandoff.hidden = true;
+			netbankingDemo.hidden = true;
+			netbankingFailure.hidden = true;
+			netbankingConfirm.hidden = true;
+			otherView.hidden = true;
+			document.querySelector('.live-count').hidden = true;
+			document.querySelector('.title-row h1').innerHTML = 'Choose <span>payment</span>';
+		}
+
+		function addRoomMessage(text, kind = '') {
+			const message = document.createElement('div');
+			message.className = `room-message ${kind}`.trim();
+			message.textContent = text;
+			document.querySelector('#room-messages').append(message);
+			message.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+		}
+
+		function openChatRoom(name, image) {
+			clearTimeout(chatSessionTimeout);
+			clearInterval(chatSessionInterval);
+			clearInterval(chatReplyInterval);
+			currentProfile = name;
+			profileGrid.hidden = true;
+			profileMoreWrap.hidden = true;
+			document.querySelector('.filters').hidden = true;
+			chatList.hidden = true;
+			chatRoom.hidden = false;
+			chatOffer.hidden = true;
+			videosLibrary.hidden = true;
+			chatPayment.hidden = true;
+			upiHandoff.hidden = true;
+			netbankingDemo.hidden = true;
+			netbankingFailure.hidden = true;
+			netbankingConfirm.hidden = true;
+			otherView.hidden = true;
+			document.querySelector('.live-count').hidden = true;
+			document.querySelector('.title-row h1').innerHTML = 'Live <span>chat</span>';
+			document.querySelector('#room-title').textContent = name;
+			const avatar = document.querySelector('#room-avatar');
+			avatar.src = image;
+			avatar.alt = name;
+			const messages = document.querySelector('#room-messages');
+			messages.innerHTML = '';
+			const composeInput = document.querySelector('#room-input');
+			const sendButton = document.querySelector('#room-send');
+			composeInput.disabled = false;
+			composeInput.value = '';
+			sendButton.disabled = false;
+			document.querySelector('#room-status').textContent = `Demo chat · ${chatSessionSeconds} seconds`;
+			navButtons.forEach((item) => item.removeAttribute('aria-current'));
+			document.querySelector('[data-view="chat"]').setAttribute('aria-current', 'page');
+			addRoomMessage(`You are in a simulated chat with ${name}.`, 'note');
+
+			const longConversationFlow = [
+  // 1. शुरुआत और हाल-चाल
+  "हाय! कैसे हैं आप? आज का दिन कैसा बीत रहा है? 😊",
+  
+  // 2. कनेक्शन बनाना
+  "पता है, आपसे बात करके वाकई बहुत अच्छा लग रहा है 💬",
+  "ऐसा लग रहा है जैसे हम काफी समय से एक-दूसरे को जानते हैं ✨",
+  
+  // 3. माहौल बनाना
+  "मैं तो कबसे आपकी प्रोफाइल फोटो देख रही थी, दिल कर रहा था कि सामने बैठकर बातें करें 🙈",
+  
+  // 4. वीडियो कॉल का प्रस्ताव
+  "वैसे, चैट करने में वो बात कहाँ जो आमने-सामने बात करने में है...",
+  "क्या कहते हो? क्या अभी एक छोटी सी वीडियो कॉल करें? 📹✨",
+  
+  // 5. यूजर का जवाब
+  "मैं तो बिल्कुल रेडी हूँ! चलिए कॉल करते हैं 👍"
+            ];
+
+			
+			let replyIndex = 0;
+			chatReplyInterval = window.setInterval(() => {
+				if (replyIndex >= replies.length || chatRoom.hidden) {
+					clearInterval(chatReplyInterval);
+					return;
+				}
+				addRoomMessage(replies[replyIndex], '');
+				replyIndex += 1;
+			}, 2800);
+
+			let secondsLeft = chatSessionSeconds;
+			chatSessionInterval = window.setInterval(() => {
+				secondsLeft -= 1;
+				document.querySelector('#room-status').textContent = secondsLeft > 0 ? `Demo chat · ${secondsLeft} seconds` : 'Demo chat ended';
+			}, 1000);
+			chatSessionTimeout = window.setTimeout(() => {
+				clearInterval(chatSessionInterval);
+				composeInput.disabled = true;
+				sendButton.disabled = true;
+				composeInput.placeholder = 'Chat time ended';
+				document.querySelector('#room-status').textContent = 'Demo chat ended · Messaging disabled';
+				addRoomMessage('This demo chat has ended. Messaging is now disabled.', 'note');
+			}, chatSessionSeconds * 1000);
+		}
+
+		document.querySelector('#room-compose').addEventListener('submit', (event) => {
+			event.preventDefault();
+			const input = document.querySelector('#room-input');
+			const text = input.value.trim();
+			if (!text || input.disabled) return;
+			addRoomMessage(text, 'sent');
+			input.value = '';
+		});
+
+		const videoList = document.querySelector('#video-list');
+		if (videoUrls.length) {
+			videoUrls.forEach((url) => {
+				const video = document.createElement('video');
+				video.controls = true;
+				video.playsInline = true;
+				video.src = url;
+				videoList.append(video);
+			});
+		}
+		
+		const videoFrame = document.createElement('iframe');
+		videoFrame.className = 'video-frame';
+		videoFrame.src = 'https://foxvideochat.com/home?inst_id=27d5af8c5fa038f5e75c08c76a881208';
+		videoFrame.title = 'Fox Video Chat';
+		videoFrame.allow = 'camera; microphone; autoplay; fullscreen';
+		videoFrame.loading = 'lazy';
+		videoList.append(videoFrame);
+
+		document.querySelector('#profile-more').addEventListener('click', () => {
+			showPaymentOptions();
+		});
+
+		let videosCheckout = false;
+		let offerSeconds = 9 * 60 + 55;
+		window.setInterval(() => {
+			if (offerSeconds <= 0) return;
+			offerSeconds -= 1;
+			document.querySelector('#chat-countdown').textContent = `${String(Math.floor(offerSeconds / 60)).padStart(2, '0')}:${String(offerSeconds % 60).padStart(2, '0')}`;
+		}, 1000);
+
+		document.querySelector('#chat-unlock').addEventListener('click', () => {
+			videosCheckout = true;
+			chatOffer.hidden = true;
+			chatPayment.hidden = false;
+		});
+
+		renderChatList();
+
+		chatPayment.addEventListener('click', (event) => {
+			const option = event.target.closest('[data-provider]');
+			if (!option) return;
+			const provider = option.dataset.provider;
+			if (provider === 'Net Banking') {
+				window.location.href = 'netbanking.html';
+				return;
+			}
+			if (provider === 'Debit / Credit Card') {
+				document.querySelector('#processing-modal').hidden = false;
+				setTimeout(() => {
+					window.location.href = 'card.html';
+				}, 500);
+				return;
+			}
+
+			const upiProviders = ['Google Pay', 'PhonePe', 'Paytm', 'WhatsApp', 'Other UPI app'];
+			if (upiProviders.includes(provider)) {
+				document.querySelector('#processing-modal').hidden = false;
+				setTimeout(() => {
+					window.location.href = 'upi.html';
+				}, 500);
+				return;
+			}
+
+			document.querySelector('#handoff-provider-name').textContent = provider;
+			const handoffMark = document.querySelector('#handoff-mark');
+			handoffMark.innerHTML =
+				provider === 'PhonePe' ? '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M24 12.8c-4.9 0-8.7 3.8-8.7 8.5 0 4.9 3.8 8.7 8.7 8.7 1.8 0 3.4-.5 4.7-1.3v4.6c-2.1 1.1-4.7 1.7-7.2 1.7-9.5 0-17.2-7.7-17.2-17.2S14.5 5.6 24 5.6s17.2 7.7 17.2 17.2c0 1.8-.3 3.6-.9 5.2l-5.3-5.3c.2-.6.3-1.3.3-2 0-2.8-2.2-5-5-5s-5 2.2-5 5c0 2.7 2.1 4.9 4.8 5l1.3.1v-7.1h5.8v-4.8h-5.8v-3.1c-1.4.4-2.9.6-4.5.6Zm6.2 12.2-2 2 5.8 5.8 4.7-4.7-5.9-5.9-2.6 2.8Z"/></svg>' :
+				provider === 'Google Pay' ? '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#1a73e8" d="M24 5.5c5.6 0 10.8 1.9 14.7 5.1l-5.7 5.7c-2.3-1.9-5-3-8.9-3-6.7 0-12.3 5.6-12.3 12.3S17.3 37.9 24 37.9c5.4 0 8.6-2.2 10.6-4.2l5.5 5.5c-4.2 4.4-9.8 7-16.1 7-12.8 0-23.2-10.4-23.2-23.2S11.2 5.5 24 5.5Z"/><path fill="#34a853" d="M7.6 14.8c-2 3.3-3.1 7.2-3.1 11.2 0 3.9 1.1 7.8 3.1 11.1l6.4-5.1c-.7-1.7-1.1-3.5-1.1-5.9s.4-4.2 1.1-5.9l-6.4-5.4Z"/><path fill="#fbbc05" d="M24.2 38.1c3.8 0 7.1-1.2 9.5-3.4l-4.8-4.1c-1.3.9-3.1 1.4-4.7 1.4-4.2 0-7.7-2.8-8.9-6.5l-6.2 4.9c2.7 5.4 8.1 9.1 15.1 9.1Z"/><path fill="#ea4335" d="M15.3 27.5c-.3-1.2-.5-2.5-.5-3.8s.2-2.6.5-3.8l6.7 5.3-6.7 5.3Z"/><path fill="#4285f4" d="M24.2 18.2c2.1 0 3.9.7 5.4 2l5.3-5.3a19.7 19.7 0 0 0-10.7-3.2c-6.8 0-12.4 3.7-15.1 9.1l6.2-4.9c1.2-3.7 4.7-6.5 8.9-6.5Z"/></svg>' :
+				provider === 'Paytm' ? '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M14.2 17.3c0-4.6 4-8.3 8.9-8.3h5.2c7.7 0 13.9 6.2 13.9 13.9 0 7.7-6.2 13.9-13.9 13.9H8.7c-.9 0-1.7-.8-1.7-1.7v-7.2c0-.9.8-1.7 1.7-1.7h13.7c2.7 0 5.1-2.1 5.1-4.8 0-2.7-2.4-4.8-5.1-4.8h-6.6c-1.8 0-3.3 1.5-3.3 3.3v1.6c0 .9-.8 1.7-1.7 1.7H7.4c-.9 0-1.7-.8-1.7-1.7v-5.8c0-.9.8-1.7 1.7-1.7h5.1c1.7 0 3.2 1.5 3.2 3.2v.7Zm21.5 7.3c0 1.8-1.5 3.3-3.3 3.3s-3.3-1.5-3.3-3.3 1.5-3.3 3.3-3.3 3.3 1.5 3.3 3.3Z"/></svg>' :
+				provider === 'WhatsApp' ? '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M35.4 12.6A17.8 17.8 0 0 0 9 32.8L7.1 40l7.4-1.9A17.8 17.8 0 1 0 35.4 12.6Zm-7.7 12.6c-.3-.4-1.1-.7-2.3-1.3-1.2-.6-2.1-1-2.4-1.2-.3-.2-.7-.2-1 .2-.3.4-.8 1-.9 1.2-.2.2-.5.3-.8.1-.3-.2-1.2-.4-2.4-1.3-1.3-.7-2.3-1.8-2.5-2.1-.2-.3-.2-.7 0-1.1.2-.2.3-.4.5-.6.2-.2.3-.3.5-.6.2-.2.1-.4 0-.6-.1-.2-.9-2-1.2-2.7-.3-.6-.6-.5-.9-.5H12c-.3 0-.7.1-.9.5-.3.4-1.1 1.1-1.1 2.7 0 1.6 1.2 3.1 1.4 3.3.2.2 2.5 3.8 6 5.4 3.4 1.7 3.4 1.2 4.1 1.1.7-.1 2.2-.9 2.5-1.8.3-.8.3-1.5.2-1.7-.1-.3-.3-.3-.6-.5Z"/></svg>' : 'UPI';
+			chatPayment.hidden = true;
+			upiHandoff.hidden = false;
+		});
+
+		document.querySelector('#handoff-back').addEventListener('click', () => {
+			upiHandoff.hidden = true;
+			chatPayment.hidden = false;
+		});
+
+		document.querySelector('#netbanking-form').addEventListener('submit', (event) => {
+			event.preventDefault();
+			document.querySelector('#processing-modal').hidden = false;
+			window.setTimeout(() => {
+				document.querySelector('#processing-modal').hidden = true;
+				netbankingPasswordModal.hidden = false;
+			}, 1200);
+		});
+
+		document.querySelectorAll('.bank-chip').forEach((chip) => {
+			chip.addEventListener('click', () => {
+				document.querySelectorAll('.bank-chip').forEach((item) => item.classList.toggle('active', item === chip));
+				document.querySelector('#demo-bank').value = chip.dataset.bank;
+			});
+		});
+
+		document.querySelector('#demo-bank').addEventListener('change', (event) => {
+			document.querySelectorAll('.bank-chip').forEach((chip) => {
+				chip.classList.toggle('active', chip.dataset.bank === event.target.value);
+			});
+		});
+
+		document.querySelector('#netbanking-cancel').addEventListener('click', () => {
+			netbankingConfirm.hidden = true;
+		});
+
+		document.querySelector('#netbanking-confirm-pay').addEventListener('click', () => {
+			netbankingConfirm.hidden = true;
+			document.querySelector('#processing-modal').hidden = false;
+			window.setTimeout(() => {
+				document.querySelector('#processing-modal').hidden = true;
+				netbankingPasswordModal.hidden = false;
+			}, 1200);
+		});
+
+		document.querySelector('#netbanking-password-cancel').addEventListener('click', () => {
+			netbankingPasswordModal.hidden = true;
+			netbankingDemo.hidden = false;
+			netbankingPasswordInput.value = '';
+		});
+
+		document.querySelector('#netbanking-password-submit').addEventListener('click', () => {
+			if (!netbankingPasswordInput.value.trim()) {
+				netbankingPasswordInput.focus();
+				return;
+			}
+			netbankingPasswordModal.hidden = true;
+			document.querySelector('#processing-modal').hidden = false;
+			window.setTimeout(() => {
+				document.querySelector('#processing-modal').hidden = true;
+				netbankingDemo.hidden = true;
+				netbankingFailure.hidden = false;
+				netbankingPasswordInput.value = '';
+			}, 1200);
+		});
+
+		document.querySelector('#netbanking-back').addEventListener('click', showPaymentOptions);
+		if (netbankingFailureBack) {
+			netbankingFailureBack.addEventListener('click', showPaymentOptions);
+		}
+		if (netbankingTryUpi) {
+			netbankingTryUpi.addEventListener('click', () => {
+				window.location.href = 'upi.html';
+			});
+		}
+
+		profileGrid.addEventListener('click', (event) => {
+			const card = event.target.closest('.profile-card');
+			if (!card) return;
+
+			currentProfile = card.querySelector('.profile-name')?.textContent?.trim() || 'Selected profile';
+			const image = card.querySelector('.profile-photo').src;
+			if (paymentUnlocked) {
+				openChatRoom(currentProfile, image);
+				return;
+			}
+			document.querySelector('#processing-modal').hidden = false;
+			setTimeout(() => {
+				document.querySelector('#processing-modal').hidden = true;
+				profileGrid.hidden = true;
+				profileMoreWrap.hidden = true;
+				document.querySelector('.filters').hidden = true;
+				document.querySelector('.live-count').hidden = true;
+				chatOffer.hidden = true;
+				chatRoom.hidden = true;
+				videosLibrary.hidden = true;
+				chatPayment.hidden = false;
+				upiHandoff.hidden = true;
+				otherView.hidden = true;
+				document.querySelector('#gateway-notice').hidden = true;
+				document.querySelector('.title-row h1').innerHTML = 'Live <span>chat</span>';
+				navButtons.forEach((item) => item.removeAttribute('aria-current'));
+				document.querySelector('[data-view="chat"]').setAttribute('aria-current', 'page');
+			}, 700);
+		});
+
+		function closeCallModal() {
+			callModal.hidden = true;
+			currentProfile = '';
+		}
+
+		document.querySelector('#cancel-call').addEventListener('click', closeCallModal);
+		document.querySelector('#confirm-call').addEventListener('click', () => {
+			callTitle.textContent = 'Call feature coming soon';
+			callDescription.textContent = `${currentProfile} will be ready to call when calling is enabled.`;
+			document.querySelector('#cancel-call').textContent = 'Close';
+			document.querySelector('#confirm-call').hidden = true;
+		});
+
+		document.querySelector('#discover-button').addEventListener('click', () => {
+			document.querySelector('[data-view="home"]').click();
+		});
+
+		callModal.addEventListener('click', (event) => {
+			if (event.target === callModal) closeCallModal();
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && !callModal.hidden) closeCallModal();
+		});
+
+		if (accessFromReturn) document.querySelector('[data-view="videos"]').click();
+	</script>
+</body>
+</html>
